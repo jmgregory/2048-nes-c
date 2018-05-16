@@ -85,9 +85,15 @@ void draw_board(void) {
         PPU_ADDRESS = draw_addr & 0xFF;
         
         power = board[i] & 0x0F;
-        color = power == 0 ? 0x05 : ((color_lookup[power] & 0x03));
+        if (power == 0) {
+            tile_addr = 0;
+        }
+        else {
+            tile_addr = (color_lookup[power] & 0x03) << 1;
+            if ((power & 0x01) == 0)
+                tile_addr += 6;
+        }
 
-        tile_addr = 0x04 * color;
         PPU_DATA = tile_addr;
         ++tile_addr;
         PPU_DATA = tile_addr;
@@ -96,7 +102,7 @@ void draw_board(void) {
         PPU_ADDRESS = draw_addr >> 8;
         PPU_ADDRESS = draw_addr & 0xFF;
 
-        ++tile_addr;
+        tile_addr += 15;
         PPU_DATA = tile_addr;
         ++tile_addr;
         PPU_DATA = tile_addr;
@@ -108,38 +114,30 @@ void draw_board(void) {
         PPU_ADDRESS = 0xC9 + i;
 
         power = board[i+0] & 0x0F;
-        color = power == 0 ? 0x05 : color_lookup[power];
-        pals[0] = color & 0x30;
+        pals[0] = color_lookup[power] & 0x30;
 
         power = board[i+1] & 0x0F;
-        color = power == 0 ? 0x05 : color_lookup[power];
-        pals[1] = color & 0x30;
+        pals[1] = color_lookup[power] & 0x30;
 
         power = board[i+4] & 0x0F;
-        color = power == 0 ? 0x05 : color_lookup[power];
-        pals[2] = color & 0x30;
+        pals[2] = color_lookup[power] & 0x30;
 
         power = board[i+5] & 0x0F;
-        color = power == 0 ? 0x05 : color_lookup[power];
-        pals[3] = color & 0x30;
+        pals[3] = color_lookup[power] & 0x30;
 
         PPU_DATA = (pals[0] >> 4) | (pals[1] >> 2) | (pals[2]) | (pals[3] << 2);
 
         power = board[i+2] & 0x0F;
-        color = power == 0 ? 0x05 : color_lookup[power];
-        pals[0] = color & 0x30;
+        pals[0] = color_lookup[power] & 0x30;
 
         power = board[i+3] & 0x0F;
-        color = power == 0 ? 0x05 : color_lookup[power];
-        pals[1] = color & 0x30;
+        pals[1] = color_lookup[power] & 0x30;
 
         power = board[i+6] & 0x0F;
-        color = power == 0 ? 0x05 : color_lookup[power];
-        pals[2] = color & 0x30;
+        pals[2] = color_lookup[power] & 0x30;
 
         power = board[i+7] & 0x0F;
-        color = power == 0 ? 0x05 : color_lookup[power];
-        pals[3] = color & 0x30;
+        pals[3] = color_lookup[power] & 0x30;
 
         PPU_DATA = (pals[0] >> 4) | (pals[1] >> 2) | (pals[2]) | (pals[3] << 2);
     }
